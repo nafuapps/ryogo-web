@@ -1,0 +1,1 @@
+//Vehicles/id (details) page

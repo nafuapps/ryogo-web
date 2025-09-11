@@ -6,8 +6,8 @@ import {
   index,
   integer,
   pgEnum,
+  pgSequence,
   pgTable,
-  serial,
   text,
   time,
   timestamp,
@@ -24,6 +24,14 @@ const timestamps = {
     .$onUpdate(() => new Date()),
 };
 
+//Common Sequence values
+const sequenceValues = {
+  startWith: 1000000,
+  maxValue: 9999999,
+  minValue: 1000000,
+  increment: 1,
+};
+
 //Agencies table
 export const agencyStatus = pgEnum("agency_status", [
   "new",
@@ -35,10 +43,17 @@ export const subscriptionPlan = pgEnum("subscription_plan", [
   "trial",
   "premium",
 ]);
+export const agencyIdSequence = pgSequence("agency_id_seq", {
+  ...sequenceValues,
+});
 export const agencies = pgTable(
   "agencies",
   {
-    id: serial("id").primaryKey(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'A' || nextval(${"agency_id_seq"})`;
+      }),
     businessName: varchar("business_name", { length: 30 }).notNull(),
     businessPhone: varchar("business_phone", { length: 10 }).notNull(),
     businessEmail: varchar("business_email", { length: 60 }).notNull(),
@@ -50,7 +65,7 @@ export const agencies = pgTable(
     defaultCommissionRate: integer("default_commission_rate")
       .notNull()
       .default(15), // percentage
-    locationId: integer("location_id")
+    locationId: text("location_id")
       .references(() => locations.id, { onDelete: "set null" })
       .notNull(),
     ...timestamps,
@@ -95,11 +110,18 @@ export const userStatus = pgEnum("user_status", [
   "active",
   "suspended",
 ]);
+export const userIdSequence = pgSequence("user_id_seq", {
+  ...sequenceValues,
+});
 export const users = pgTable(
   "users",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'U' || nextval(${"user_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
     name: varchar("name", { length: 30 }).notNull(),
@@ -159,11 +181,18 @@ export const vehicleStatus = pgEnum("vehicle_status", [
   "inactive",
   "suspended",
 ]);
+export const vehicleIdSequence = pgSequence("vehicle_id_seq", {
+  ...sequenceValues,
+});
 export const vehicles = pgTable(
   "vehicles",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'V' || nextval(${"vehicle_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
     vehicleNumber: varchar("vehicle_number", { length: 15 }).notNull(),
@@ -227,14 +256,21 @@ export const driverStatus = pgEnum("driver_status", [
   "inactive",
   "suspended",
 ]);
+export const driverIdSequence = pgSequence("driver_id_seq", {
+  ...sequenceValues,
+});
 export const drivers = pgTable(
   "drivers",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'D' || nextval(${"driver_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
-    userId: integer("user_id")
+    userId: text("user_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull()
       .unique(),
@@ -278,14 +314,21 @@ export const driverRelations = relations(drivers, ({ one, many }) => ({
 }));
 
 //Routes table
+export const routeIdSequence = pgSequence("route_id_seq", {
+  ...sequenceValues,
+});
 export const routes = pgTable(
   "routes",
   {
-    id: serial("id").primaryKey(),
-    sourceId: integer("source_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'R' || nextval(${"route_id_seq"})`;
+      }),
+    sourceId: text("source_id")
       .references(() => locations.id, { onDelete: "cascade" })
       .notNull(),
-    destinationId: integer("destination_id")
+    destinationId: text("destination_id")
       .references(() => locations.id, { onDelete: "cascade" })
       .notNull(),
     distance: integer("distance").notNull(), // in kilometers
@@ -332,21 +375,28 @@ export const customerStatus = pgEnum("customer_status", [
   "inactive",
   "suspended",
 ]);
+export const customerIdSequence = pgSequence("customer_id_seq", {
+  ...sequenceValues,
+});
 export const customers = pgTable(
   "customers",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'C' || nextval(${"customer_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
     name: varchar("name", { length: 30 }).notNull(),
     phone: varchar("phone", { length: 10 }).notNull(),
     email: varchar("email", { length: 60 }),
     address: text("address"),
-    addedByUserId: integer("added_by_user_id")
+    addedByUserId: text("added_by_user_id")
       .references(() => users.id, { onDelete: "set null" })
       .notNull(),
-    locationId: integer("location_id")
+    locationId: text("location_id")
       .references(() => locations.id, { onDelete: "set null" })
       .notNull(),
     status: customerStatus().notNull().default("active"),
@@ -392,37 +442,43 @@ export const bookingType = pgEnum("booking_type", [
   "Round",
   "MultiDay",
 ]);
+export const bookingIdSequence = pgSequence("booking_id_seq", {
+  ...sequenceValues,
+});
 export const bookings = pgTable(
   "bookings",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'B' || nextval(${"booking_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
-    customerId: integer("customer_id")
+    customerId: text("customer_id")
       .references(() => customers.id, { onDelete: "cascade" })
       .notNull(),
-    assignedVehicleId: integer("assigned_vehicle_id").references(
+    assignedVehicleId: text("assigned_vehicle_id").references(
       () => vehicles.id,
       { onDelete: "set null" }
     ),
-    assignedDriverId: integer("assigned_driver_id").references(
-      () => drivers.id,
-      { onDelete: "set null" }
-    ),
-    bookedByUserId: integer("booked_by_user_id")
+    assignedDriverId: text("assigned_driver_id").references(() => drivers.id, {
+      onDelete: "set null",
+    }),
+    bookedByUserId: text("booked_by_user_id")
       .references(() => users.id, { onDelete: "set null" })
       .notNull(),
-    assignedUserId: integer("assigned_user_id")
+    assignedUserId: text("assigned_user_id")
       .references(() => users.id, { onDelete: "set null" })
       .notNull(),
-    sourceId: integer("source_id")
+    sourceId: text("source_id")
       .references(() => locations.id, { onDelete: "set null" })
       .notNull(),
-    destinationId: integer("destination_id")
+    destinationId: text("destination_id")
       .references(() => locations.id, { onDelete: "set null" })
       .notNull(),
-    routeId: integer("route_id").references(() => routes.id, {
+    routeId: text("route_id").references(() => routes.id, {
       onDelete: "set null",
     }),
     totalDistance: integer("total_distance"), // in kilometers
@@ -538,17 +594,24 @@ export const expenseTypes = pgEnum("expense_types", [
   "food",
   "other",
 ]);
+export const expenseIdSequence = pgSequence("expense_id_seq", {
+  ...sequenceValues,
+});
 export const expenses = pgTable(
   "expenses",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'E' || nextval(${"expense_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
-    bookingId: integer("booking_id").references(() => bookings.id, {
+    bookingId: text("booking_id").references(() => bookings.id, {
       onDelete: "cascade",
     }),
-    addedByUserId: integer("added_by_user_id")
+    addedByUserId: text("added_by_user_id")
       .references(() => users.id, { onDelete: "set null" })
       .notNull(),
     type: expenseTypes().notNull(),
@@ -592,20 +655,27 @@ export const tripLogTypes = pgEnum("trip_log_types", [
   "pickup",
   "drop",
 ]);
+export const tripLogIdSequence = pgSequence("trip_log_id_seq", {
+  ...sequenceValues,
+});
 export const tripLogs = pgTable(
   "trip_logs",
   {
-    id: serial("id").primaryKey(),
-    bookingId: integer("booking_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'TL' || nextval(${"trip_log_id_seq"})`;
+      }),
+    bookingId: text("booking_id")
       .references(() => bookings.id, { onDelete: "cascade" })
       .notNull(),
-    agencyId: integer("agency_id")
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
-    vehicleId: integer("vehicle_id")
+    vehicleId: text("vehicle_id")
       .references(() => vehicles.id, { onDelete: "set null" })
       .notNull(),
-    driverId: integer("driver_id")
+    driverId: text("driver_id")
       .references(() => drivers.id, { onDelete: "set null" })
       .notNull(),
     odometerReading: integer("odometer_reading").notNull(), // in kilometers
@@ -660,17 +730,24 @@ export const transactionModes = pgEnum("transaction_modes", [
   "upi",
   "other",
 ]);
+export const transactionIdSequence = pgSequence("transaction_id_seq", {
+  ...sequenceValues,
+});
 export const transactions = pgTable(
   "transactions",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'T' || nextval(${"transaction_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
-    bookingId: integer("booking_id").references(() => bookings.id, {
+    bookingId: text("booking_id").references(() => bookings.id, {
       onDelete: "cascade",
     }),
-    addedByUserId: integer("added_by_user_id").references(() => users.id, {
+    addedByUserId: text("added_by_user_id").references(() => users.id, {
       onDelete: "set null",
     }),
     amount: integer("amount").notNull(), // in currency units
@@ -709,10 +786,17 @@ export const transactionRelations = relations(transactions, ({ one }) => ({
 }));
 
 //Locations table
+export const locationIdSequence = pgSequence("location_id_seq", {
+  ...sequenceValues,
+});
 export const locations = pgTable(
   "locations",
   {
-    id: serial("id").primaryKey(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'L' || nextval(${"location_id_seq"})`;
+      }),
     city: varchar("city", { length: 30 }).notNull(),
     state: varchar("state", { length: 30 }).notNull(),
     latLong: varchar("lat_long", { length: 50 }), // "lat,long"
@@ -737,17 +821,24 @@ export const locationRelations = relations(locations, ({ many }) => ({
 }));
 
 //Vehicle Services table
+export const vehicleServiceIdSequence = pgSequence("vehicle_service_id_seq", {
+  ...sequenceValues,
+});
 export const vehicleServices = pgTable(
   "vehicle_services",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'VS' || nextval(${"vehicle_service_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
-    vehicleId: integer("vehicle_id")
+    vehicleId: text("vehicle_id")
       .references(() => vehicles.id, { onDelete: "cascade" })
       .notNull(),
-    addedByUserId: integer("added_by_user_id")
+    addedByUserId: text("added_by_user_id")
       .references(() => users.id, { onDelete: "set null" })
       .notNull(),
     startDate: date("start_date").notNull(),
@@ -782,17 +873,24 @@ export const vehicleServiceRelations = relations(
 );
 
 //Driver Leaves table
+export const driverLeaveIdSequence = pgSequence("driverLeave_id_seq", {
+  ...sequenceValues,
+});
 export const driverLeaves = pgTable(
   "driver_leaves",
   {
-    id: serial("id").primaryKey(),
-    agencyId: integer("agency_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'DL' || nextval(${"driver_leave_id_seq"})`;
+      }),
+    agencyId: text("agency_id")
       .references(() => agencies.id, { onDelete: "cascade" })
       .notNull(),
-    driverId: integer("driver_id")
+    driverId: text("driver_id")
       .references(() => drivers.id, { onDelete: "cascade" })
       .notNull(),
-    addedByUserId: integer("added_by_user_id")
+    addedByUserId: text("added_by_user_id")
       .references(() => users.id, { onDelete: "set null" })
       .notNull(),
     startDate: date("start_date").notNull(),

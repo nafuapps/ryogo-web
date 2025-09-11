@@ -1,0 +1,1 @@
+//Onboarding success page - redirect to dashboard

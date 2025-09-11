@@ -13,8 +13,21 @@ CREATE TYPE "public"."user_roles" AS ENUM('agent', 'owner', 'admin', 'driver');-
 CREATE TYPE "public"."user_status" AS ENUM('new', 'inactive', 'active', 'suspended');--> statement-breakpoint
 CREATE TYPE "public"."vehicle_status" AS ENUM('available', 'on_trip', 'inactive', 'suspended');--> statement-breakpoint
 CREATE TYPE "public"."vehicle_types" AS ENUM('car', 'bike', 'bus', 'other', 'truck');--> statement-breakpoint
+CREATE SEQUENCE "public"."agency_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."booking_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."customer_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."driver_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."driverLeave_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."expense_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."location_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."route_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."transaction_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."trip_log_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."user_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."vehicle_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
+CREATE SEQUENCE "public"."vehicle_service_id_seq" INCREMENT BY 1 MINVALUE 1000000 MAXVALUE 9999999 START WITH 1000000 CACHE 1;--> statement-breakpoint
 CREATE TABLE "agencies" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"business_name" varchar(30) NOT NULL,
 	"business_phone" varchar(10) NOT NULL,
 	"business_email" varchar(60) NOT NULL,
@@ -24,23 +37,23 @@ CREATE TABLE "agencies" (
 	"subscription_expires_on" timestamp NOT NULL,
 	"status" "agency_status" DEFAULT 'new' NOT NULL,
 	"default_commission_rate" integer DEFAULT 15 NOT NULL,
-	"location_id" integer NOT NULL,
+	"location_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp NOT NULL,
 	CONSTRAINT "commission_rate >= 0 AND commission_rate <= 100" CHECK ("agencies"."default_commission_rate" >= 0 AND "agencies"."default_commission_rate" <= 100)
 );
 --> statement-breakpoint
 CREATE TABLE "bookings" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
-	"customer_id" integer NOT NULL,
-	"assigned_vehicle_id" integer,
-	"assigned_driver_id" integer,
-	"booked_by_user_id" integer NOT NULL,
-	"assigned_user_id" integer NOT NULL,
-	"source_id" integer NOT NULL,
-	"destination_id" integer NOT NULL,
-	"route_id" integer,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
+	"customer_id" text NOT NULL,
+	"assigned_vehicle_id" text,
+	"assigned_driver_id" text,
+	"booked_by_user_id" text NOT NULL,
+	"assigned_user_id" text NOT NULL,
+	"source_id" text NOT NULL,
+	"destination_id" text NOT NULL,
+	"route_id" text,
 	"total_distance" integer,
 	"start_date" date NOT NULL,
 	"end_date" date NOT NULL,
@@ -67,14 +80,14 @@ CREATE TABLE "bookings" (
 );
 --> statement-breakpoint
 CREATE TABLE "customers" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
 	"name" varchar(30) NOT NULL,
 	"phone" varchar(10) NOT NULL,
 	"email" varchar(60),
 	"address" text,
-	"added_by_user_id" integer NOT NULL,
-	"location_id" integer NOT NULL,
+	"added_by_user_id" text NOT NULL,
+	"location_id" text NOT NULL,
 	"status" "customer_status" DEFAULT 'active' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp NOT NULL,
@@ -82,10 +95,10 @@ CREATE TABLE "customers" (
 );
 --> statement-breakpoint
 CREATE TABLE "driver_leaves" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
-	"driver_id" integer NOT NULL,
-	"added_by_user_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
+	"driver_id" text NOT NULL,
+	"added_by_user_id" text NOT NULL,
 	"start_date" date NOT NULL,
 	"end_date" date NOT NULL,
 	"remarks" text,
@@ -95,9 +108,9 @@ CREATE TABLE "driver_leaves" (
 );
 --> statement-breakpoint
 CREATE TABLE "drivers" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
-	"user_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
+	"user_id" text NOT NULL,
 	"name" varchar(30) NOT NULL,
 	"phone" varchar(10) NOT NULL,
 	"address" text NOT NULL,
@@ -114,10 +127,10 @@ CREATE TABLE "drivers" (
 );
 --> statement-breakpoint
 CREATE TABLE "expenses" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
-	"booking_id" integer,
-	"added_by_user_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
+	"booking_id" text,
+	"added_by_user_id" text NOT NULL,
 	"type" "expense_types" NOT NULL,
 	"amount" integer NOT NULL,
 	"remarks" text,
@@ -129,7 +142,7 @@ CREATE TABLE "expenses" (
 );
 --> statement-breakpoint
 CREATE TABLE "locations" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"city" varchar(30) NOT NULL,
 	"state" varchar(30) NOT NULL,
 	"lat_long" varchar(50),
@@ -140,9 +153,9 @@ CREATE TABLE "locations" (
 );
 --> statement-breakpoint
 CREATE TABLE "routes" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"source_id" integer NOT NULL,
-	"destination_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"source_id" text NOT NULL,
+	"destination_id" text NOT NULL,
 	"distance" integer NOT NULL,
 	"estimated_time" integer,
 	"is_active" boolean DEFAULT true NOT NULL,
@@ -154,10 +167,10 @@ CREATE TABLE "routes" (
 );
 --> statement-breakpoint
 CREATE TABLE "transactions" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
-	"booking_id" integer,
-	"added_by_user_id" integer,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
+	"booking_id" text,
+	"added_by_user_id" text,
 	"amount" integer NOT NULL,
 	"otherParty" "transaction_parties" DEFAULT 'customer' NOT NULL,
 	"type" "transaction_types" NOT NULL,
@@ -170,11 +183,11 @@ CREATE TABLE "transactions" (
 );
 --> statement-breakpoint
 CREATE TABLE "trip_logs" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"booking_id" integer NOT NULL,
-	"agency_id" integer NOT NULL,
-	"vehicle_id" integer NOT NULL,
-	"driver_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"booking_id" text NOT NULL,
+	"agency_id" text NOT NULL,
+	"vehicle_id" text NOT NULL,
+	"driver_id" text NOT NULL,
 	"odometer_reading" integer NOT NULL,
 	"type" "trip_log_types" NOT NULL,
 	"remarks" text,
@@ -186,8 +199,8 @@ CREATE TABLE "trip_logs" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
 	"name" varchar(30) NOT NULL,
 	"phone" varchar(10) NOT NULL,
 	"email" varchar(60) NOT NULL,
@@ -203,10 +216,10 @@ CREATE TABLE "users" (
 );
 --> statement-breakpoint
 CREATE TABLE "vehicle_services" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
-	"vehicle_id" integer NOT NULL,
-	"added_by_user_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
+	"vehicle_id" text NOT NULL,
+	"added_by_user_id" text NOT NULL,
 	"start_date" date NOT NULL,
 	"end_date" date NOT NULL,
 	"remarks" text,
@@ -216,8 +229,8 @@ CREATE TABLE "vehicle_services" (
 );
 --> statement-breakpoint
 CREATE TABLE "vehicles" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"agency_id" integer NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"agency_id" text NOT NULL,
 	"vehicle_number" varchar(15) NOT NULL,
 	"brand" varchar(30) NOT NULL,
 	"model" varchar(30) NOT NULL,

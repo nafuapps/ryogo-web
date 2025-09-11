@@ -1,5 +1,5 @@
 {
-  "id": "98a51b66-8376-4f31-9634-e31199990371",
+  "id": "3e2895c5-f934-4c32-8afc-a54e1a36dd8c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,7 +10,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -75,7 +75,7 @@
         },
         "location_id": {
           "name": "location_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -172,61 +172,61 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "customer_id": {
           "name": "customer_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "assigned_vehicle_id": {
           "name": "assigned_vehicle_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "assigned_driver_id": {
           "name": "assigned_driver_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "booked_by_user_id": {
           "name": "booked_by_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "assigned_user_id": {
           "name": "assigned_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "source_id": {
           "name": "source_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "destination_id": {
           "name": "destination_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "route_id": {
           "name": "route_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -763,13 +763,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -799,13 +799,13 @@
         },
         "added_by_user_id": {
           "name": "added_by_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "location_id": {
           "name": "location_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1009,25 +1009,25 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "driver_id": {
           "name": "driver_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "added_by_user_id": {
           "name": "added_by_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1207,19 +1207,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1446,25 +1446,25 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "booking_id": {
           "name": "booking_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "added_by_user_id": {
           "name": "added_by_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1652,7 +1652,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -1755,19 +1755,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "source_id": {
           "name": "source_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "destination_id": {
           "name": "destination_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1930,25 +1930,25 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "booking_id": {
           "name": "booking_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "added_by_user_id": {
           "name": "added_by_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -2167,31 +2167,31 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "booking_id": {
           "name": "booking_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "vehicle_id": {
           "name": "vehicle_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "driver_id": {
           "name": "driver_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -2391,13 +2391,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -2617,25 +2617,25 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "vehicle_id": {
           "name": "vehicle_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "added_by_user_id": {
           "name": "added_by_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -2815,13 +2815,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "agency_id": {
           "name": "agency_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -3252,7 +3252,138 @@
     }
   },
   "schemas": {},
-  "sequences": {},
+  "sequences": {
+    "public.agency_id_seq": {
+      "name": "agency_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.booking_id_seq": {
+      "name": "booking_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.customer_id_seq": {
+      "name": "customer_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.driver_id_seq": {
+      "name": "driver_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.driverLeave_id_seq": {
+      "name": "driverLeave_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.expense_id_seq": {
+      "name": "expense_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.location_id_seq": {
+      "name": "location_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.route_id_seq": {
+      "name": "route_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.transaction_id_seq": {
+      "name": "transaction_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.trip_log_id_seq": {
+      "name": "trip_log_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.user_id_seq": {
+      "name": "user_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.vehicle_id_seq": {
+      "name": "vehicle_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    },
+    "public.vehicle_service_id_seq": {
+      "name": "vehicle_service_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1000000",
+      "minValue": "1000000",
+      "maxValue": "9999999",
+      "cache": "1",
+      "cycle": false
+    }
+  },
   "roles": {},
   "policies": {},
   "views": {},
