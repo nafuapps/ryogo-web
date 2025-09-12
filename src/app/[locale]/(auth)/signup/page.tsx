@@ -1,11 +1,8 @@
 //Signup page
-import React from "react";
 
+import {useTranslations} from 'next-intl';
+ 
 export default function SignupPage() {
-  return (
-    <div>
-      <h1>Signup</h1>
-      {/* Add your form or UI here */}
-    </div>
-  );
+  const t = useTranslations('Landing');
+  return <h1>{t('title')}</h1>;
 }
