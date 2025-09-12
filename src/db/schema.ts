@@ -14,6 +14,7 @@ import {
   unique,
   uniqueIndex,
   varchar,
+  geometry,
 } from "drizzle-orm/pg-core";
 
 //Common timestamps
@@ -127,16 +128,18 @@ export const users = pgTable(
     name: varchar("name", { length: 30 }).notNull(),
     phone: varchar("phone", { length: 10 }).notNull(),
     email: varchar("email", { length: 60 }).notNull(),
-    passwordHash: text("password_hash").notNull(),
+    password: text("password").notNull(),
     photoUrl: text("photo_url"),
     userRole: userRoles().notNull().default("agent"),
     status: agencyStatus().notNull().default("new"),
     lastLogin: timestamp("last_login"),
-    loginValidTill: timestamp("login_valid_till"),
+    lastLogout: timestamp("last_logout"),
     ...timestamps,
   },
   (t) => [
     unique().on(t.agencyId, t.phone, t.userRole), //Owner or Agent can also be a driver
+    check("last login <= now", sql`${t.lastLogin} <= now()`),
+    check("last logout <= now", sql`${t.lastLogout} <= now()`),
     uniqueIndex("users_agency_role_phone_idx").on(
       t.agencyId,
       t.phone,
@@ -165,6 +168,37 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   vehicleServicesAdded: many(vehicleServices),
   driverLeavesAdded: many(driverLeaves),
   customersAdded: many(customers),
+  sessions: many(sessions),
+}));
+
+//Sessions table
+export const sessionIdSequence = pgSequence("session_id_seq", {
+  ...sequenceValues,
+});
+export const sessions = pgTable(
+  "sessions",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => {
+        return sql`'S' || nextval(${"session_id_seq"})`;
+      }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expiresAt: timestamp("expires_at").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    check("expires_at > now", sql`${t.expiresAt} > now()`),
+    index("sessions_user_idx").on(t.userId), // to quickly filter sessions by user
+  ]
+);
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
+  }),
 }));
 
 //Vehicles table
@@ -800,6 +834,11 @@ export const locations = pgTable(
     city: varchar("city", { length: 30 }).notNull(),
     state: varchar("state", { length: 30 }).notNull(),
     latLong: varchar("lat_long", { length: 50 }), // "lat,long"
+    location: geometry("location", {
+      type: "point",
+      mode: "xy",
+      srid: 4326,
+    }).notNull(),
     isActive: boolean("is_active").notNull().default(true),
     ...timestamps,
   },
@@ -807,6 +846,7 @@ export const locations = pgTable(
     unique().on(t.city, t.state), //same location cannot be added twice
     uniqueIndex("locations_city_state_idx").on(t.city, t.state), // to quickly find unique location by city and state
     index("locations_active_idx").on(t.isActive), // to quickly filter active/inactive locations
+    index("locations_spatial_idx").using("gist", t.location), // to quickly filter locations by spatial queries
   ]
 );
 export const locationRelations = relations(locations, ({ many }) => ({
@@ -920,3 +960,46 @@ export const driverLeaveRelations = relations(driverLeaves, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+//Export types
+export type SelectAgency = typeof agencies.$inferSelect;
+export type InsertAgency = typeof agencies.$inferInsert;
+
+export type SelectUser = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+
+export type SelectSession = typeof sessions.$inferSelect;
+export type InsertSession = typeof sessions.$inferInsert;
+
+export type SelectVehicle = typeof vehicles.$inferSelect;
+export type InsertVehicle = typeof vehicles.$inferInsert;
+
+export type SelectDriver = typeof drivers.$inferSelect;
+export type InsertDriver = typeof drivers.$inferInsert;
+
+export type SelectRoute = typeof routes.$inferSelect;
+export type InsertRoute = typeof routes.$inferInsert;
+
+export type SelectCustomer = typeof customers.$inferSelect;
+export type InsertCustomer = typeof customers.$inferInsert;
+
+export type SelectBooking = typeof bookings.$inferSelect;
+export type InsertBooking = typeof bookings.$inferInsert;
+
+export type SelectExpense = typeof expenses.$inferSelect;
+export type InsertExpense = typeof expenses.$inferInsert;
+
+export type SelectTripLog = typeof tripLogs.$inferSelect;
+export type InsertTripLog = typeof tripLogs.$inferInsert;
+
+export type SelectTransaction = typeof transactions.$inferSelect;
+export type InsertTransaction = typeof transactions.$inferInsert;
+
+export type SelectLocation = typeof locations.$inferSelect;
+export type InsertLocation = typeof locations.$inferInsert;
+
+export type SelectVehicleService = typeof vehicleServices.$inferSelect;
+export type InsertVehicleService = typeof vehicleServices.$inferInsert;
+
+export type SelectDriverLeave = typeof driverLeaves.$inferSelect;
+export type InsertDriverLeave = typeof driverLeaves.$inferInsert;
